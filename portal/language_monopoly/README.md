@@ -34,7 +34,7 @@
 
 ## WebApp 快速啟動
 
-1. 進入 `language_monopoly/webapp`，執行 `npm install`。
+1. 進入 `portal/language_monopoly/webapp`，執行 `npm install`。
 2. 以 `npm run dev` 啟動本機開發伺服器（預設 http://localhost:5173）。
 3. 若需多人即時同步，在 GitHub Pages 上部署前請於 `.env` 設定：
    ```
@@ -42,5 +42,9 @@
    VITE_SUPABASE_ANON_KEY=public-anon-key
    ```
    沒有設定時仍可本機輪流遊玩。
-4. `npm run build` 會產出 `webapp/dist/`，請複製到 repo 根目錄的 `docs/`（與 `language_monopoly/` 同層）後推送；GitHub Pages 設定為「Branch: language_monopoly / Folder: /docs」即可對外提供互動版。
+4. `npm run build` 會產出 `webapp/dist/`，請複製到 repo 根目錄的 `docs/` 後推送；GitHub Pages 設定為「Branch: main / Folder: /docs」即可對外提供互動版。
+
+## Portal 結構
+
+此套件現在位於 `portal/language_monopoly/`，作為 Primarychi Portal 的一部分。可以透過 `docs/index.html` 的入口頁面訪問。
 
