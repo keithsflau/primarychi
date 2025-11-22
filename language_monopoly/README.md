@@ -42,5 +42,5 @@
    VITE_SUPABASE_ANON_KEY=public-anon-key
    ```
    沒有設定時仍可本機輪流遊玩。
-4. `npm run build` 會產出 `webapp/dist/`，請複製到 `language_monopoly/docs/` 後推送；GitHub Pages 設定為「Branch: language_monopoly / Folder: /docs」即可對外提供互動版。
+4. `npm run build` 會產出 `webapp/dist/`，請複製到 repo 根目錄的 `docs/`（與 `language_monopoly/` 同層）後推送；GitHub Pages 設定為「Branch: language_monopoly / Folder: /docs」即可對外提供互動版。
 
