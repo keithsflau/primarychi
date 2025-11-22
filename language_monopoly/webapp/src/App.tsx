@@ -7,6 +7,7 @@ import { ActionPanel } from "./components/ActionPanel";
 import { CardDrawer } from "./components/CardDrawer";
 import { GameLog } from "./components/GameLog";
 import { SetupLobby } from "./components/SetupLobby";
+import { QuizModal } from "./components/QuizModal";
 import { useRealtimeRoom } from "./services/realtime";
 
 const realtimeEnabled =
@@ -19,6 +20,7 @@ function App() {
   const players = useGameStore((state) => state.players);
   const propertyStates = useGameStore((state) => state.propertyStates);
   const pendingPurchase = useGameStore((state) => state.pendingPurchase);
+  const pendingQuiz = useGameStore((state) => state.pendingQuiz);
   const pendingSpecial = useGameStore((state) => state.pendingSpecial);
   const drawnCard = useGameStore((state) => state.drawnCard);
   const log = useGameStore((state) => state.log);
@@ -85,6 +87,12 @@ function App() {
         <GameLog entries={log} />
       </div>
       <CardDrawer drawnCard={drawnCard} onClose={actions.closeCard} />
+      {pendingQuiz && (
+        <QuizModal
+          question={pendingQuiz.question}
+          onAnswer={actions.answerQuiz}
+        />
+      )}
     </div>
   );
 }

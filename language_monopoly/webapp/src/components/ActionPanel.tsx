@@ -91,9 +91,12 @@ export const ActionPanel = ({
       {pendingPurchase && targetSpace.id === pendingPurchase && (
         <div className="notice">
           <p>是否購買 {targetSpace.name}（成本 {targetSpace.cost}）？</p>
+          <p style={{ fontSize: "0.9rem", color: "#666", marginTop: "0.5rem" }}>
+            💡 點擊「購買」後需要回答一道語文問題，答對才能購買！
+          </p>
           <div className="action-buttons">
             <button type="button" onClick={onPurchase}>
-              購買
+              購買（需答題）
             </button>
             <button type="button" onClick={onSkipPurchase}>
               放棄
