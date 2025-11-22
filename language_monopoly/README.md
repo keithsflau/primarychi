@@ -7,6 +7,7 @@
 - `board_layout.csv`：40 格棋盤逐格說明，含顏色組、語文技能與停留效果。
 - `cards_opportunity.csv`、`cards_fate.csv`：10 張機會卡與 10 張命運卡，皆融入語文任務。
 - `rules_and_activities.md`：詳細規則、租金與貨幣設定、特殊格說明、教學延伸與配件清單。
+- `webapp/`：以 React + Vite 建立的互動網頁版，可 2-4 人同步遊玩，具備擲骰、抽卡動畫及資源自動計算。
 
 ## 使用方式
 
@@ -30,4 +31,16 @@
 > 註：`語文活動中心`、`語文修養室`、`餐膳補給站` 等角落維持大富翁對應功能，但情境換成中文課活動；詳細效果請見 `board_layout.csv` 與 `rules_and_activities.md`。
 
 後續若要加入更多卡牌或格子，可在此分支繼續擴充。***
+
+## WebApp 快速啟動
+
+1. 進入 `language_monopoly/webapp`，執行 `npm install`。
+2. 以 `npm run dev` 啟動本機開發伺服器（預設 http://localhost:5173）。
+3. 若需多人即時同步，在 GitHub Pages 上部署前請於 `.env` 設定：
+   ```
+   VITE_SUPABASE_URL=your-project-url
+   VITE_SUPABASE_ANON_KEY=public-anon-key
+   ```
+   沒有設定時仍可本機輪流遊玩。
+4. `npm run build` 會產出 `webapp/dist/`，請複製到 `language_monopoly/docs/` 後推送；GitHub Pages 設定為「Branch: language_monopoly / Folder: /docs」即可對外提供互動版。
 
