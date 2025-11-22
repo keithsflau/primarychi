@@ -14,6 +14,8 @@ const colorSwatches: Record<string, string> = {
   "深藍（高階語文）": "#26547c",
 };
 
+const chineseAncientIcons = ["🧙‍♂️", "👨‍🏫", "🎓", "👘", "🧑‍🎓", "👨‍🎨", "🧑‍🏫", "👨‍💼"];
+
 const getGridPosition = (index: number) => {
   const idx = index;
   if (idx <= 10) {
@@ -90,14 +92,23 @@ export const Board = ({
               </div>
             )}
             <div className="tile-players">
-              {occupants.map((p) => (
-                <span
-                  key={p.id}
-                  className="player-token"
-                  style={{ backgroundColor: p.color }}
-                  title={p.name}
-                />
-              ))}
+              {occupants.map((p) => {
+                const playerIndex = players.findIndex(pl => pl.id === p.id);
+                const icon = chineseAncientIcons[playerIndex % chineseAncientIcons.length];
+                return (
+                  <span
+                    key={p.id}
+                    className="player-token"
+                    style={{ 
+                      backgroundColor: p.color,
+                      borderColor: p.color,
+                    }}
+                    title={p.name}
+                  >
+                    <span className="player-icon">{icon}</span>
+                  </span>
+                );
+              })}
             </div>
           </button>
         );
