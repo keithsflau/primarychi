@@ -14,6 +14,17 @@ const colorSwatches: Record<string, string> = {
   "深藍（高階語文）": "#26547c",
 };
 
+const chineseAncientIcons = [
+  "👨‍🏫", // 老師
+  "🎓",   // 學士帽
+  "📜",   // 卷軸
+  "🖋️",   // 毛筆
+  "📚",   // 書籍
+  "🏛️",   // 古典建築
+  "🎭",   // 戲劇面具
+  "⚱️",   // 古董
+];
+
 const getGridPosition = (index: number) => {
   const idx = index;
   if (idx <= 10) {
@@ -90,14 +101,23 @@ export const Board = ({
               </div>
             )}
             <div className="tile-players">
-              {occupants.map((p) => (
-                <span
-                  key={p.id}
-                  className="player-token"
-                  style={{ backgroundColor: p.color }}
-                  title={p.name}
-                />
-              ))}
+              {occupants.map((p) => {
+                const playerIndex = players.findIndex(pl => pl.id === p.id);
+                const icon = chineseAncientIcons[playerIndex % chineseAncientIcons.length];
+                return (
+                  <span
+                    key={p.id}
+                    className="player-token"
+                    style={{ 
+                      backgroundColor: p.color,
+                      borderColor: p.color,
+                    }}
+                    title={p.name}
+                  >
+                    <span className="player-icon">{icon}</span>
+                  </span>
+                );
+              })}
             </div>
           </button>
         );

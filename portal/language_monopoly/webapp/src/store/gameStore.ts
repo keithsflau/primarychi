@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { boardSpaces, colorGroups } from "../data/board";
 import { fateCards, opportunityCards } from "../data/cards";
+import { getRandomQuestion, type QuizQuestion } from "../data/questions";
 import type {
   BoardSpace,
   CardAction,
@@ -48,6 +49,7 @@ interface GameStore {
   discard: Record<CardDeckType, CardDefinition[]>;
   currentPlayerIndex: number;
   pendingPurchase?: number;
+  pendingQuiz?: { question: QuizQuestion; spaceId: number };
   drawnCard?: DrawnCard;
   pendingSpecial?: {
     type: "library" | "canteen" | "oratory";
@@ -65,6 +67,7 @@ interface GameStore {
     endTurn: () => void;
     purchaseProperty: () => void;
     skipPurchase: () => void;
+    answerQuiz: (correct: boolean) => void;
     drawCard: (deck: CardDeckType) => void;
     closeCard: () => void;
     buildHouse: (spaceId: number) => void;
@@ -87,6 +90,7 @@ export interface GameStoreStateSnapshot {
   discard: Record<CardDeckType, CardDefinition[]>;
   currentPlayerIndex: number;
   pendingPurchase?: number;
+  pendingQuiz?: { question: QuizQuestion; spaceId: number };
   drawnCard?: DrawnCard;
   pendingSpecial?: {
     type: "library" | "canteen" | "oratory";
@@ -104,6 +108,7 @@ export const createSnapshot = (state: GameStore): GameStoreStateSnapshot => ({
   discard: state.discard,
   currentPlayerIndex: state.currentPlayerIndex,
   pendingPurchase: state.pendingPurchase,
+  pendingQuiz: state.pendingQuiz,
   drawnCard: state.drawnCard,
   pendingSpecial: state.pendingSpecial,
   log: state.log,
@@ -318,6 +323,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         ...state,
         currentPlayerIndex: (state.currentPlayerIndex + 1) % state.players.length,
         pendingPurchase: undefined,
+        pendingQuiz: undefined,
         pendingSpecial: undefined,
         drawnCard: undefined,
         lastDice: undefined,
@@ -334,26 +340,63 @@ export const useGameStore = create<GameStore>((set, get) => ({
             pendingPurchase: undefined,
           };
         }
-        player.resources -= space.cost;
-        player.properties.push(space.id);
-        state.propertyStates[space.id] = {
-          ownerId: player.id,
-          houses: 0,
-          academy: false,
+        if (state.pendingQuiz) {
+          return state;
+        }
+        const question = getRandomQuestion();
+        return {
+          ...state,
+          pendingQuiz: { question, spaceId: state.pendingPurchase },
         };
-        const log = [
-          ...state.log,
-          `${player.name} 購買了 ${space.name}（-${space.cost}）`,
-        ];
+      }),
+    answerQuiz: (correct: boolean) =>
+      set((state) => {
+        if (!state.pendingQuiz) return state;
+        const player = state.players[state.currentPlayerIndex];
+        const space = state.board[state.pendingQuiz.spaceId - 1];
+        const log = [...state.log];
+
+        if (correct) {
+          if (!space.cost || player.resources < space.cost) {
+            log.push(`${player.name} 答對了，但資源不足，無法購買 ${space.name}`);
+            return {
+              ...state,
+              players: [...state.players],
+              log,
+              pendingPurchase: undefined,
+              pendingQuiz: undefined,
+            };
+          }
+          player.resources -= space.cost;
+          player.properties.push(space.id);
+          state.propertyStates[space.id] = {
+            ownerId: player.id,
+            houses: 0,
+            academy: false,
+          };
+          log.push(
+            `${player.name} 答對了問題，成功購買 ${space.name}（-${space.cost}）`
+          );
+        } else {
+          log.push(
+            `${player.name} 答錯了問題，無法購買 ${space.name}。要繼續學習！`
+          );
+        }
         return {
           ...state,
           players: [...state.players],
           propertyStates: { ...state.propertyStates },
           log,
           pendingPurchase: undefined,
+          pendingQuiz: undefined,
         };
       }),
-    skipPurchase: () => set({ pendingPurchase: undefined }),
+    skipPurchase: () =>
+      set((state) => ({
+        ...state,
+        pendingPurchase: undefined,
+        pendingQuiz: undefined,
+      })),
     drawCard: (deck) => {
       const state = get();
       const cards = state.decks[deck];
